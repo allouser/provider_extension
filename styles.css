@@ -1,0 +1,39 @@
+/* Provider Detail Quick Copy — big, easy-to-see copy buttons */
+.pdc-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 8px;
+  padding: 5px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  line-height: 1.4;
+  color: #ffffff;
+  background: #1a73e8;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  vertical-align: middle;
+  user-select: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.pdc-copy-btn:hover {
+  background: #1765cc;
+}
+
+.pdc-copy-btn:active {
+  background: #1557b0;
+  transform: translateY(1px);
+}
+
+.pdc-copy-btn.pdc-done {
+  background: #188038;
+}
+
+.pdc-copy-btn:focus {
+  outline: 3px solid #ffab00;
+  outline-offset: 1px;
+}

@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Provider Detail Quick Copy",
+  "version": "1.1.0",
+  "description": "Adds one-click Copy buttons next to the provider's Name, ID, Email and Mobile — on the provider detail page only.",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Provider Detail Quick Copy"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://app.allocabs.com/*",
+        "https://app.allocabs.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "http://app.allocabs.com/*",
+        "https://app.allocabs.com/*"
+      ],
+      "js": ["list-hook.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
+    }
+  ]
+}
