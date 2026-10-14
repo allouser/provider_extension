@@ -178,27 +178,48 @@
     var idx = idColIndex();
     var rows = document.querySelectorAll('app-provider-list tbody tr, .Tbleby tbody tr');
     for (var r = 0; r < rows.length; r++) {
-      var tr = rows[r];
-      if (tr.dataset && tr.dataset.pdcRow) continue;
-      var cells = tr.children;
-      if (cells.length <= idx) continue;
-      var code = clean(cells[idx].textContent);
-      var id = map[code];
-      if (!id) continue;                 // wait until we know the numeric id
-      tr.dataset.pdcRow = '1';
-      tr.addEventListener('click', function (e) {
-        // Instantly respect the on/off switch (checked at click time, so no
-        // refresh is needed to disable the feature).
-        if (!enabled) return;
-        // Don't hijack real controls: action menu, links, buttons, inputs.
-        if (e.target.closest &&
-            e.target.closest('a, button, mat-icon, .mat-mdc-menu-trigger, [role="menuitem"], input, textarea, select, .pdc-copy-btn, #pdc-toggle')) {
-          return;
-        }
-        e.preventDefault();
-        e.stopPropagation();
-        window.open(location.origin + '/provider/view/' + id, '_blank', 'noopener');
-      });
+      (function () {
+        var tr = rows[r];
+        if (!tr || !tr.children) return;
+        var cells = tr.children;
+        if (cells.length <= idx) return;
+        var code = clean(cells[idx].textContent);
+        var id = map[code];
+        if (!id) return;                 // wait until we know the numeric id
+        // Always refresh stored id — Angular reuses <tr> nodes on pagination,
+        // so a row wired on page 1 would otherwise keep its old id on page 2.
+        try { tr.dataset.pdcId = id; } catch (_) {}
+        if (tr.dataset && tr.dataset.pdcRow) return; // already has listener
+        tr.dataset.pdcRow = '1';
+        tr.addEventListener('click', function (e) {
+          // Instantly respect the on/off switch (checked at click time, so no
+          // refresh is needed to disable the feature).
+          if (!enabled) return;
+          // Don't hijack real controls: action menu, links, buttons, inputs.
+          if (e.target.closest &&
+              e.target.closest('a, button, mat-icon, .mat-mdc-menu-trigger, [role="menuitem"], input, textarea, select, .pdc-copy-btn, #pdc-toggle')) {
+            return;
+          }
+          // Read id LIVE from this row (not a loop variable) — fixes classic
+          // var-closure bug where every row opened the LAST row's id.
+          var row = e.currentTarget || tr;
+          var liveId = null;
+          try { liveId = row.dataset && row.dataset.pdcId; } catch (_) {}
+          if (!liveId) {
+            try {
+              var cIdx = idColIndex();
+              var cCells = row.children;
+              if (cCells && cCells.length > cIdx) {
+                liveId = map[clean(cCells[cIdx].textContent)];
+              }
+            } catch (_) {}
+          }
+          if (!liveId) return;
+          e.preventDefault();
+          e.stopPropagation();
+          window.open(location.origin + '/provider/view/' + liveId, '_blank', 'noopener');
+        });
+      })();
     }
   }
 
